@@ -1,0 +1,22 @@
+# scheduler/scheduler.py
+from fastapi import FastAPI
+from apscheduler.schedulers.background import BackgroundScheduler
+from utils import JsonFileHandler
+import time
+
+scheduler = BackgroundScheduler()
+
+def scheduled_task():
+    print("定時任務執行中:", time.strftime("%Y-%m-%d %H:%M:%S"))
+
+def init_scheduler(app: FastAPI):
+    @app.on_event("startup")
+    def start_scheduler():
+        scheduler.add_job(JsonFileHandler.save_file(), 'interval', seconds=10)
+        scheduler.start()
+        print("Scheduler 已啟動")
+s
+    @app.on_event("shutdown")
+    def shutdown_scheduler():
+        scheduler.shutdown()
+        print("Scheduler 已關閉")
